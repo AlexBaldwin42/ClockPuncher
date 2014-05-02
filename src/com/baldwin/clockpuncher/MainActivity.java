@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
@@ -53,9 +52,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 
 
-		Clock entry = new Clock(MainActivity.this);
-		
-		
 		switch (v.getId()) {
 
 		case R.id.bPunchIn:
@@ -64,30 +60,26 @@ public class MainActivity extends Activity implements OnClickListener {
 			Shift shiftEntry = new Shift();
 			shiftEntry.setTimeIn(calHelperIn.getTimeInMillis());
 
-			entry.open();
-			entry.createEntryTimeIn(Long.toString(calHelperIn.getTimeInMillis()));
-			entry.close();
-
 			Log.d("punchIn", Integer.toString(calHelperIn.get(Calendar.HOUR)));
 			
 			timeIn.setText(calHelperIn.getTime().toString().substring(4,19));
 
-			break;
+		break;
 
 		case R.id.bPunchOut:
+            ClockDbAdapter entry = new ClockDbAdapter(MainActivity.this);
             calHelperOut = Calendar.getInstance();
 			calHelperOut.setTime(calHelperOut.getTime());
+            //Set strings up to be sent to database.
+            String strTimeIn = Long.toString(calHelperIn.getTimeInMillis());
+            String strTimeOut = Long.toString(calHelperOut.getTimeInMillis());
 
             //Set the display taking off the first and last parts
             timeOut.setText(calHelperOut.getTime().toString().substring(4, 19));
 
-            //Set strings up to be sent to database.
-            String timeIn = Long.toString(calHelperIn.getTimeInMillis());
-            String timeOut = Long.toString(calHelperOut.getTimeInMillis());
-
             //create database entry
 			entry.open();
-			entry.createEntry(timeIn, timeOut);
+			entry.createEntry(strTimeIn, strTimeOut);
 			entry.close();
 			
 			Log.d("calhelperin", Long.toString(calHelperIn.getTimeInMillis()));
@@ -109,10 +101,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				clockedTime.setText(String.valueOf(punchedTime) + " Mins");
 
 			}
-			
-			
-
-			break;
+		break;
 			
 		case R.id.bViewDb:
 			Intent i = new Intent("com.baldwin.clockpuncher.VIEWDB");

@@ -10,7 +10,7 @@ public class ViewDb extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewdb);
 		TextView tv = (TextView) findViewById(R.id.tvSQLinfo);
-		Clock info = new Clock(this);
+		ClockDbAdapter info = new ClockDbAdapter(this);
 		info.open();
 		String data = info.getData();
 		info.close();
