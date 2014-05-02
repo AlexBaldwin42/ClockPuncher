@@ -104,7 +104,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		break;
 			
 		case R.id.bViewDb:
-			Intent i = new Intent("com.baldwin.clockpuncher.VIEWDB");
+			Intent i = new Intent(this, ViewDb.class);
 			startActivity(i);
 			break;
 		}
