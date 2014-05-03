@@ -49,16 +49,26 @@ public class ClockDbAdapter {
 
     //
     public long createEntryTimeOut(String timeOut) {
-        // TODO Need to have this method find the last record that doesn't have a punched time And insert into that row
-        //
-        Log.d("createEntryTimeOut", timeOut);
+
+        // Finds the last record of the database and updates the time out field.
         ContentValues cv = new ContentValues();
         cv.put(DbHelper.KEY_TIME_OUT, timeOut);
-        Log.d("createEntryTimeOut", "rowId= " + Long.toString(rowId));
+        String[] columns = {DbHelper.KEY_ROW_ID};
+        int iRow;
+        long lRow;
 
-        return ourDatabase.update(DbHelper.DATABASE_TABLE, cv, "_id =" + rowId, null);
+        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns,null,null,null,null,null);
+        iRow = c.getColumnIndex(DbHelper.KEY_ROW_ID);
+        c.moveToLast();
+        lRow = Long.parseLong(c.getString(iRow));
+
+        Log.d("createEntryTimeOut", timeOut);
+        Log.d("CreateEntryTimeOut lRow = ", "" + lRow);
+
+        return ourDatabase.update(DbHelper.DATABASE_TABLE, cv, "_id =" + lRow, null);
     }
     //Method that creates a row with both time in and time out
+    //Not used anymore.
     public long createEntry(String timeIn, String timeOut) {
         Log.d("Create Entry", timeIn + " - " + timeOut);
         ContentValues cv = new ContentValues();
@@ -105,7 +115,7 @@ public class ClockDbAdapter {
 
         public DbHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
-            // TODO Auto-generated constructor stub
+
         }
 
         @Override
@@ -117,7 +127,6 @@ public class ClockDbAdapter {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
 
         }
 

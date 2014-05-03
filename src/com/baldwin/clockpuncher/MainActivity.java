@@ -51,7 +51,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 
-
+        ClockDbAdapter db = new ClockDbAdapter(MainActivity.this);
 		switch (v.getId()) {
 
 		case R.id.bPunchIn:
@@ -60,14 +60,18 @@ public class MainActivity extends Activity implements OnClickListener {
 			Shift shiftEntry = new Shift();
 			shiftEntry.setTimeIn(calHelperIn.getTimeInMillis());
 
-			Log.d("punchIn", Integer.toString(calHelperIn.get(Calendar.HOUR)));
+            db.open();
+			db.createEntryTimeIn(Long.toString(calHelperIn.getTimeInMillis()));
+            db.close();
+
+            Log.d("punchIn", Integer.toString(calHelperIn.get(Calendar.HOUR)));
 			
 			timeIn.setText(calHelperIn.getTime().toString().substring(4,19));
 
 		break;
 
 		case R.id.bPunchOut:
-            ClockDbAdapter entry = new ClockDbAdapter(MainActivity.this);
+
             calHelperOut = Calendar.getInstance();
 			calHelperOut.setTime(calHelperOut.getTime());
             //Set strings up to be sent to database.
@@ -77,10 +81,10 @@ public class MainActivity extends Activity implements OnClickListener {
             //Set the display taking off the first and last parts
             timeOut.setText(calHelperOut.getTime().toString().substring(4, 19));
 
-            //create database entry
-			entry.open();
-			entry.createEntry(strTimeIn, strTimeOut);
-			entry.close();
+            //create database db
+			db.open();
+			db.createEntryTimeOut(strTimeOut);
+			db.close();
 			
 			Log.d("calhelperin", Long.toString(calHelperIn.getTimeInMillis()));
             Log.d("calgelperOut",Long.toString(calHelperOut.getTimeInMillis()));
