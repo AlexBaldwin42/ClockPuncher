@@ -128,10 +128,10 @@ public class MainActivity extends Activity implements OnClickListener {
                 db.createEntryTimeOut(strTimeOut);
                 db.close();
 
-                Log.d("calhelperin", Long.toString(calHelperIn.getTimeInMillis()));
-                Log.d("calgelperOut", Long.toString(calHelperOut.getTimeInMillis()));
+                Log.d("lTimeIn", Long.toString(lTimeIn));
+                Log.d("calgelperOut", Long.toString(lTimeOut));
                 //Calculate the amount of time that's past between punches.
-                punchedTime = calHelperOut.getTimeInMillis() - lTimeIn;
+                punchedTime = lTimeOut - lTimeIn;
                 Log.d("punchout", Long.toString(punchedTime));
                 //Converts punched time from milliseconds to minutes.
                 punchedTime = punchedTime / 1000 / 60;
