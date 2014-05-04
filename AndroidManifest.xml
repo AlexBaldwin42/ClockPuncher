@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.baldwin.clockpuncher.ViewDb"
-                  android:label="View Data"
+                  android:label="@string/view_data_activity"
 
        />
 

@@ -36,11 +36,37 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		punchIn.setOnClickListener(this);
 		punchOut.setOnClickListener(this);
-		viewDb.setOnClickListener(this);
 
 	}
 
-	@Override
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("strTimeIn",timeIn.getText().toString());
+        outState.putString("strTimeOut",timeOut.getText().toString());
+        outState.putString("strClockedTime", clockedTime.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        timeIn.setText(savedInstanceState.getString("strTimeIn"));
+        timeOut.setText(savedInstanceState.getString("strTimeOut"));
+        clockedTime.setText(savedInstanceState.getString("strClockedTime"));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_main, menu);
@@ -52,6 +78,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 
         ClockDbAdapter db = new ClockDbAdapter(MainActivity.this);
+        String timePunched;
+        String output;
 		switch (v.getId()) {
 
 		case R.id.bPunchIn:
@@ -65,8 +93,10 @@ public class MainActivity extends Activity implements OnClickListener {
             db.close();
 
             Log.d("punchIn", Integer.toString(calHelperIn.get(Calendar.HOUR)));
-			
-			timeIn.setText(calHelperIn.getTime().toString().substring(4,19));
+
+            timePunched = calHelperIn.getTime().toString().substring(4,19);
+            output = timeIn.getText().toString() + "\n" + timePunched;
+			timeIn.setText(output);
 
 		break;
 
@@ -74,44 +104,59 @@ public class MainActivity extends Activity implements OnClickListener {
 
             calHelperOut = Calendar.getInstance();
 			calHelperOut.setTime(calHelperOut.getTime());
-            //Set strings up to be sent to database.
-            String strTimeIn = Long.toString(calHelperIn.getTimeInMillis());
-            String strTimeOut = Long.toString(calHelperOut.getTimeInMillis());
+            db.open();
+            long lTimeIn = db.lastTimeIn();
+            long lTimeOut = db.lastTimeOut();
+            Log.d("punchOut lTimeIn", "" + lTimeIn);
+            Log.d("punchOut lTimeOut", "" + lTimeOut);
+            db.close();
+            if (lTimeOut > 0) {
+                Log.d("Punch Out", "tried to punch out with out punching in");
+            }else {
+                //Set strings up to be sent to database.
 
-            //Set the display taking off the first and last parts
-            timeOut.setText(calHelperOut.getTime().toString().substring(4, 19));
+                lTimeOut =calHelperOut.getTimeInMillis();
+                String strTimeOut = Long.toString(lTimeOut);
 
-            //create database db
-			db.open();
-			db.createEntryTimeOut(strTimeOut);
-			db.close();
-			
-			Log.d("calhelperin", Long.toString(calHelperIn.getTimeInMillis()));
-            Log.d("calgelperOut",Long.toString(calHelperOut.getTimeInMillis()));
-            //Calculate the amount of time that's past between punches.
-            punchedTime = calHelperOut.getTimeInMillis() - calHelperIn.getTimeInMillis();
-            Log.d("punchout", Long.toString(punchedTime));
-			//Converts punched time from milliseconds to minutes.
-            punchedTime = punchedTime / 1000 / 60;
+                //Set the display taking off the first and last parts
+                timePunched = calHelperOut.getTime().toString().substring(4, 19);
+                output = timeOut.getText().toString() + "\n" + timePunched;
+                timeOut.setText(output);
 
-			 if (punchedTime > 60) {
+                //create database db
+                db.open();
+                db.createEntryTimeOut(strTimeOut);
+                db.close();
 
-				punchedHours = punchedTime / 60;
-				punchedTime = punchedTime % 60;
+                Log.d("calhelperin", Long.toString(calHelperIn.getTimeInMillis()));
+                Log.d("calgelperOut", Long.toString(calHelperOut.getTimeInMillis()));
+                //Calculate the amount of time that's past between punches.
+                punchedTime = calHelperOut.getTimeInMillis() - lTimeIn;
+                Log.d("punchout", Long.toString(punchedTime));
+                //Converts punched time from milliseconds to minutes.
+                punchedTime = punchedTime / 1000 / 60;
 
-				clockedTime.setText(String.valueOf(punchedHours) + ":"
-						+ String.valueOf(punchedTime));
-			} else {
-				clockedTime.setText(String.valueOf(punchedTime) + " Mins");
+                if (punchedTime > 60) {
 
-			}
+                    punchedHours = punchedTime / 60;
+                    punchedTime = punchedTime % 60;
+
+                    clockedTime.setText(String.valueOf(punchedHours) + ":"
+                            + String.valueOf(punchedTime));
+                } else {
+                    clockedTime.setText(String.valueOf(punchedTime) + " Mins");
+
+                }
+            }
 		break;
-			
-		case R.id.bViewDb:
-			Intent i = new Intent(this, ViewDb.class);
-			startActivity(i);
-			break;
 		}
 
 	}
+    //Open the activity ViewDb
+    public void viewDb(View v)
+    {
+        Intent i = new Intent(this, ViewDb.class);
+        startActivity(i);
+
+    }
 }

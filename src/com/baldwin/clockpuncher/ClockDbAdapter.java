@@ -1,6 +1,5 @@
 package com.baldwin.clockpuncher;
 
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -16,7 +15,6 @@ public class ClockDbAdapter {
     private final Context ourContext;
     private SQLiteDatabase ourDatabase;
     private long rowId;
-
 
 
     public ClockDbAdapter(Context c) {
@@ -38,7 +36,7 @@ public class ClockDbAdapter {
     }
 
     public long createEntryTimeIn(String timeIn) {
-        // TODO Auto-generated method stub
+        // TODO Check to make sure that you punched out the last time.
         Log.d("createEntryTimeIn", timeIn);
         ContentValues cv = new ContentValues();
         cv.put(DbHelper.KEY_TIME_IN, timeIn);
@@ -47,7 +45,33 @@ public class ClockDbAdapter {
 
     }
 
-    //
+    //return the last time out will be -1 if user is not punched out
+    public long lastTimeOut() {
+        long result;
+        String[] columns = {DbHelper.KEY_TIME_OUT};
+        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns, null, null, null, null, null);
+        c.moveToLast();
+
+
+        if (c.isNull(c.getColumnIndex(DbHelper.KEY_TIME_OUT))) {
+            result = -1;
+        } else {
+            result = Long.parseLong(c.getString(c.getColumnIndex(DbHelper.KEY_TIME_OUT)));
+        }
+        return result;
+    }
+
+    public long lastTimeIn() {
+        long result;
+        String[] columns = {DbHelper.KEY_TIME_IN};
+        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns, null, null, null, null, null);
+        c.moveToLast();
+        result = Long.parseLong(c.getString(c.getColumnIndex(DbHelper.KEY_TIME_IN)));
+
+        return result;
+
+    }
+
     public long createEntryTimeOut(String timeOut) {
 
         // Finds the last record of the database and updates the time out field.
@@ -57,16 +81,17 @@ public class ClockDbAdapter {
         int iRow;
         long lRow;
 
-        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns,null,null,null,null,null);
+        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns, null, null, null, null, null);
         iRow = c.getColumnIndex(DbHelper.KEY_ROW_ID);
         c.moveToLast();
         lRow = Long.parseLong(c.getString(iRow));
 
         Log.d("createEntryTimeOut", timeOut);
-        Log.d("CreateEntryTimeOut lRow = ", "" + lRow);
+        Log.d("createEntryTimeOut lRow = ", "" + lRow);
 
-        return ourDatabase.update(DbHelper.DATABASE_TABLE, cv, "_id =" + lRow, null);
+        return ourDatabase.update(DbHelper.DATABASE_TABLE, cv, DbHelper.KEY_ROW_ID + "=" + lRow, null);
     }
+
     //Method that creates a row with both time in and time out
     //Not used anymore.
     public long createEntry(String timeIn, String timeOut) {
@@ -94,20 +119,21 @@ public class ClockDbAdapter {
         //need to return this as separate values of string and long
         //TODO Possibly return a Shift object array or list.
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-            result = result + c.getString(iRow) + " " + String.valueOf(c.getLong(iTimeIn)) + " " + String.valueOf(c.getLong(iTimeOut)) +  "\n";
+            result = result + c.getString(iRow) + " " + String.valueOf(c.getLong(iTimeIn)) + " " + String.valueOf(c.getLong(iTimeOut)) + "\n";
 
         }
+
         return result;
     }
 
     private static class DbHelper extends SQLiteOpenHelper {
+
         public static final String KEY_ROW_ID = "_id";
         public static final String KEY_TIME_IN = "time_in";
         public static final String KEY_TIME_OUT = "time_out";
-
         private static final String DATABASE_NAME = "timeClock";
         private static final String DATABASE_TABLE = "timeTable";
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 2;
         public static final String CREATE_TABLE = "CREATE TABLE " + DATABASE_TABLE + " (" + KEY_ROW_ID
                 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_TIME_IN
                 + " TEXT NOT NULL, " + KEY_TIME_OUT
@@ -133,6 +159,7 @@ public class ClockDbAdapter {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+            //Delete the database and create a new one.
             try {
                 db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
                 onCreate(db);

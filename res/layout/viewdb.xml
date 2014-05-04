@@ -1,40 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal">
 
-    <TableLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
 
-        <TableRow>
+    <TextView
+            android:id="@+id/tvIn"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="Time In"/>
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:text="Time In" />
+    <TextView
+            android:id="@+id/tvOut"
+            android:background="#ccffff"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="Time Out"/>
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:text="Time Out" />
+    <TextView
+            android:id="@+id/tvTotal"
+            android:background="#00ffff"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="Total Time"/>
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:text="Total Time" />
-        </TableRow>
 
-        <TextView
-            android:id="@+id/tvSQLinfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="get info from db" />
-    </TableLayout>
+
+
 
 </LinearLayout>

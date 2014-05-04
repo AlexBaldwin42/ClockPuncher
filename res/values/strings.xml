@@ -4,5 +4,6 @@
     <string name="app_name">Clock Puncher</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="view_data_activity">View Data</string>
 
 </resources>
