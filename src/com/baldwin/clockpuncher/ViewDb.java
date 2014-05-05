@@ -2,6 +2,7 @@ package com.baldwin.clockpuncher;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.util.Calendar;
@@ -57,32 +58,34 @@ public class ViewDb extends Activity {
                 sTimeIn = calHelptimeIn.getTime().toString().substring(4, 19);
                 sTimeOut = calHelptimeOut.getTime().toString().substring(4, 19);
 
+                Log.d("viewdb lTimeOut=", ""+ lTimeOut);
                 tvIn.setText(tvIn.getText() + "\n" + sTimeIn);
-                tvOut.setText(tvOut.getText() + "\n" + sTimeOut);
+                if(lTimeOut > 0) {
+                    tvOut.setText(tvOut.getText() + "\n" + sTimeOut);
 
-                lTotalTime = lTotalTime / 1000 / 60;
-                if (lTotalTime > 60) {
+                    lTotalTime = lTotalTime / 1000 / 60;
+                    if (lTotalTime > 60) {
 
-                    lTotalHours = lTotalTime / 60;
-                    lTotalTime = lTotalTime % 60;
+                        lTotalHours = lTotalTime / 60;
+                        lTotalTime = lTotalTime % 60;
 
-                    tvTotal.setText(tvTotal.getText() + "\n"
-                            + String.valueOf(lTotalHours) + ":"
-                            + String.valueOf(lTotalTime));
-                } else {
-                    tvTotal.setText(tvTotal.getText() + "\n"
-                            + String.valueOf(lTotalTime) + " Minutes");
+                        tvTotal.setText(tvTotal.getText() + "\n"
+                                + String.valueOf(lTotalHours) + ":"
+                                + String.valueOf(lTotalTime));
+                    } else {
+                        tvTotal.setText(tvTotal.getText() + "\n"
+                                + String.valueOf(lTotalTime) + " Minutes");
+
+                    }
+                }else{
+                    //There is no time out.
+                    tvOut.setText(tvOut.getText() + "\n" + "Still Clocked in");
+                    tvTotal.setText(tvTotal.getText() + "\n" );
 
                 }
 
 
             }
-
-            //calHelptimeIn.setTimeInMillis();
-
-
-            //Set the text in the view to the data Would be better to display in a list
-            //TODO Display in a date format instead of milliseconds.
 
         }
     }

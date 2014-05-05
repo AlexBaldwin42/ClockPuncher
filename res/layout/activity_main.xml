@@ -42,6 +42,7 @@
 
 
             <TextView
+                    android:gravity="center_horizontal"
                     android:id="@+id/tvTimeOut"
                     android:background="#ccffff"
                     android:layout_width="fill_parent"
@@ -64,12 +65,13 @@
                 android:orientation="vertical">
 
             <TextView
+                    android:gravity="right"
                     android:background="#ffffff"
                     android:id="@+id/tvClockedTime"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="8"
-                    android:text="Clocked time"/>
+                    android:text="Duration"/>
             <Button
                     android:id="@+id/bPunchOut"
                     android:layout_width="wrap_content"

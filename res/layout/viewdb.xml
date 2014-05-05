@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
+              android:layout_width="fill_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal">
 
 
     <TextView
+
             android:id="@+id/tvIn"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
+            android:layout_weight="4"
             android:text="Time In"/>
 
     <TextView
+            android:gravity="center_horizontal"
             android:id="@+id/tvOut"
             android:background="#ccffff"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
+            android:layout_weight="4"
             android:text="Time Out"/>
 
     <TextView
             android:id="@+id/tvTotal"
+            android:gravity="right"
             android:background="#00ffff"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:text="Total Time"/>
+            android:layout_weight="5"
+            android:text="Duration"/>
 
 
 

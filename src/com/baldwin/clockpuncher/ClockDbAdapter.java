@@ -45,6 +45,18 @@ public class ClockDbAdapter {
 
     }
 
+    public long lastTimeIn() {
+        long result;
+        String[] columns = {DbHelper.KEY_TIME_IN};
+        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns, null, null, null, null, null);
+        c.moveToLast();
+        result = Long.parseLong(c.getString(c.getColumnIndex(DbHelper.KEY_TIME_IN)));
+
+        return result;
+
+    }
+
+
     //return the last time out will be -1 if user is not punched out
     public long lastTimeOut() {
         long result;
@@ -61,16 +73,6 @@ public class ClockDbAdapter {
         return result;
     }
 
-    public long lastTimeIn() {
-        long result;
-        String[] columns = {DbHelper.KEY_TIME_IN};
-        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns, null, null, null, null, null);
-        c.moveToLast();
-        result = Long.parseLong(c.getString(c.getColumnIndex(DbHelper.KEY_TIME_IN)));
-
-        return result;
-
-    }
 
     public long createEntryTimeOut(String timeOut) {
 
@@ -102,9 +104,7 @@ public class ClockDbAdapter {
 
         return ourDatabase.insert(DbHelper.DATABASE_TABLE, null, cv);
 
-
     }
-
 
     public String getAllData() {
         // TODO could simplify this with a while loop.

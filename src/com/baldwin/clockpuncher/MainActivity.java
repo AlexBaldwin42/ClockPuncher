@@ -141,10 +141,11 @@ public class MainActivity extends Activity implements OnClickListener {
                     punchedHours = punchedTime / 60;
                     punchedTime = punchedTime % 60;
 
-                    clockedTime.setText(String.valueOf(punchedHours) + ":"
+                    clockedTime.setText(clockedTime.getText() + "\n"
+                            + String.valueOf(punchedHours) + ":"
                             + String.valueOf(punchedTime));
                 } else {
-                    clockedTime.setText(String.valueOf(punchedTime) + " Mins");
+                    clockedTime.setText(clockedTime.getText() + "\n" + String.valueOf(punchedTime) + " Mins");
 
                 }
             }
