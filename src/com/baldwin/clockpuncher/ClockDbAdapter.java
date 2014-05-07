@@ -45,41 +45,6 @@ public class ClockDbAdapter {
 
     }
 
-    public long lastTimeIn() {
-        long result;
-        String[] columns = {DbHelper.KEY_TIME_IN};
-        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns, null, null, null, null, null);
-        c.moveToLast();
-        result = Long.parseLong(c.getString(c.getColumnIndex(DbHelper.KEY_TIME_IN)));
-
-        return result;
-
-    }
-
-
-    //return the last time out will be -1 if user is not punched out
-    public long lastTimeOut() {
-        long result;
-        String[] columns = {DbHelper.KEY_TIME_OUT};
-        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns, null, null, null, null, null);
-        if (c.getCount() == 0) {
-            result = 1;
-        } else {
-            c.moveToLast();
-
-            //could combine if statements
-
-            if (c.isNull(c.getColumnIndex(DbHelper.KEY_TIME_OUT))) {
-                result = -1;
-            } else {
-                result = Long.parseLong(c.getString(c.getColumnIndex(DbHelper.KEY_TIME_OUT)));
-            }
-        }
-
-        return result;
-    }
-
-
     public long createEntryTimeOut(String timeOut) {
 
         // Finds the last record of the database and updates the time out field.
@@ -99,6 +64,46 @@ public class ClockDbAdapter {
 
         return ourDatabase.update(DbHelper.DATABASE_TABLE, cv, DbHelper.KEY_ROW_ID + "=" + lRow, null);
     }
+
+    public long lastTimeIn() {
+        long result;
+        String[] columns = {DbHelper.KEY_TIME_IN};
+        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns, null, null, null, null, null);
+
+        if(c.getCount() == 0) {
+            result = -1;
+        }else {
+            c.moveToLast();
+
+            result = Long.parseLong(c.getString(c.getColumnIndex(DbHelper.KEY_TIME_IN)));
+        }
+        return result;
+
+    }
+
+
+    //return the last time out will be -1 if user is not punched out
+    public long lastTimeOut() {
+        long result;
+        String[] columns = {DbHelper.KEY_TIME_OUT};
+        Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns, null, null, null, null, null);
+        if (c.getCount() == 0) {
+            result = -1;
+        } else {
+            c.moveToLast();
+
+            //could combine if statements
+
+            if (c.isNull(c.getColumnIndex(DbHelper.KEY_TIME_OUT))) {
+                result = -1;
+            } else {
+                result = Long.parseLong(c.getString(c.getColumnIndex(DbHelper.KEY_TIME_OUT)));
+            }
+        }
+
+        return result;
+    }
+
 
     //Method that creates a row with both time in and time out
     //Not used anymore.
