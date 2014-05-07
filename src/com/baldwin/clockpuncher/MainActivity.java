@@ -91,6 +91,8 @@ public class MainActivity extends Activity implements OnClickListener {
                 lTimeOut = db.lastTimeOut();
                 db.close();
 
+                Log.d("Clockin in button clicked lTimeOut= ", lTimeOut + "");
+
                 if (lTimeOut > 0) {
                     calHelperIn = Calendar.getInstance();
                     Shift shiftEntry = new Shift();
@@ -116,7 +118,7 @@ public class MainActivity extends Activity implements OnClickListener {
             case R.id.bPunchOut:
 
                 calHelperOut = Calendar.getInstance();
-                calHelperOut.setTime(calHelperOut.getTime());
+                //calHelperOut.setTime(calHelperOut.getTime());
                 db.open();
                 long lTimeIn = db.lastTimeIn();
                 lTimeOut = db.lastTimeOut();

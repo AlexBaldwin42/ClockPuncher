@@ -62,14 +62,20 @@ public class ClockDbAdapter {
         long result;
         String[] columns = {DbHelper.KEY_TIME_OUT};
         Cursor c = ourDatabase.query(DbHelper.DATABASE_TABLE, columns, null, null, null, null, null);
-        c.moveToLast();
-
-
-        if (c.isNull(c.getColumnIndex(DbHelper.KEY_TIME_OUT))) {
-            result = -1;
+        if (c.getCount() == 0) {
+            result = 1;
         } else {
-            result = Long.parseLong(c.getString(c.getColumnIndex(DbHelper.KEY_TIME_OUT)));
+            c.moveToLast();
+
+            //could combine if statements
+
+            if (c.isNull(c.getColumnIndex(DbHelper.KEY_TIME_OUT))) {
+                result = -1;
+            } else {
+                result = Long.parseLong(c.getString(c.getColumnIndex(DbHelper.KEY_TIME_OUT)));
+            }
         }
+
         return result;
     }
 
