@@ -93,8 +93,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
                 if (lTimeOut > 0 || lTimeIn == -1) {
                     calHelperIn = Calendar.getInstance();
-                    Shift shiftEntry = new Shift();
-                    shiftEntry.setTimeIn(calHelperIn.getTimeInMillis());
+                    //Shift shiftEntry = new Shift();
+                    //shiftEntry.setTimeIn(calHelperIn.getTimeInMillis());
 
                     db.open();
                     db.createEntryTimeIn(Long.toString(calHelperIn.getTimeInMillis()));
