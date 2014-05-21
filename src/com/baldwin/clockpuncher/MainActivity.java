@@ -36,8 +36,92 @@ public class MainActivity extends Activity implements OnClickListener {
         timeOut = (TextView) findViewById(R.id.tvTimeOut);
         clockedTime = (TextView) findViewById(R.id.tvClockedTime);
 
+
+
         punchIn.setOnClickListener(this);
         punchOut.setOnClickListener(this);
+
+        populateField();
+
+
+
+    }
+
+    private void populateField(){
+
+        String data;
+        long lRow;
+        long lTimeIn;
+        long lTimeOut;
+        String sTimeIn;
+        String sTimeOut;
+        String sTotalTime;
+        long lClockedTime;
+        long lTotalTime;
+        long lTotalHours;
+
+        Calendar calHelptimeIn = Calendar.getInstance();
+        Calendar calHelptimeOut = Calendar.getInstance();
+
+        ClockDbAdapter info = new ClockDbAdapter(this);
+
+        //clear the view before displaying
+        timeIn.setText("");
+        timeOut.setText("");
+        clockedTime.setText("");
+
+        //Retrieve all the data in the database
+        info.open();
+        data = info.getAllData();
+        info.close();
+
+        String[] Entries = data.split("\n");
+        for (int i = Entries.length-7; i < Entries.length; i++) {
+
+            String[] sRow = Entries[i].split(" ");
+            if (sRow.length == 3) {
+
+                lRow = Long.parseLong(sRow[0]);
+                lTimeIn = Long.parseLong(sRow[1]);
+                lTimeOut = Long.parseLong(sRow[2]);
+                lTotalTime = lTimeOut - lTimeIn;
+
+
+                calHelptimeIn.setTimeInMillis(lTimeIn);
+                calHelptimeOut.setTimeInMillis(lTimeOut);
+                sTimeIn = calHelptimeIn.getTime().toString().substring(4, 19);
+                sTimeOut = calHelptimeOut.getTime().toString().substring(4, 19);
+
+                Log.d("viewdb lTimeOut=", ""+ lTimeOut);
+                timeIn.setText(timeIn.getText() + "\n" + sTimeIn);
+                if(lTimeOut > 0) {
+                    timeOut.setText(timeOut.getText() + "\n" + sTimeOut);
+
+                    lTotalTime = lTotalTime / 1000 / 60;
+                    if (lTotalTime > 60) {
+
+                        lTotalHours = lTotalTime / 60;
+                        lTotalTime = lTotalTime % 60;
+
+                        clockedTime.setText(clockedTime.getText() + "\n"
+                                + String.valueOf(lTotalHours) + ":"
+                                + String.valueOf(lTotalTime));
+                    } else {
+                        clockedTime.setText(clockedTime.getText() + "\n"
+                                + String.valueOf(lTotalTime) + " Minutes");
+
+                    }
+                }else{
+                    //There is no time out.
+                    timeOut.setText(timeOut.getText() + "\n" + "Still Clocked in");
+                    clockedTime.setText(clockedTime.getText() + "\n" );
+
+                }
+
+
+            }
+
+        }
 
     }
 
@@ -108,7 +192,7 @@ public class MainActivity extends Activity implements OnClickListener {
                     Toast.makeText(this, "You have not punched out", 2).show();
 
                 }
-
+                populateField();
                 break;
 
             case R.id.bPunchOut:
@@ -156,6 +240,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
                     }
                 }
+                populateField();
                 break;
         }
 

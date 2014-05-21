@@ -13,14 +13,12 @@ public class Shift {
         this.totalTime = timeOut - timeIn;
 	}
 	public Shift(int id, long inTime){
-		new Shift(id,inTime,0);
+        new Shift(id,inTime,0);
 	}
 	
 	public Shift(){
-		
+        new Shift(0,0,0);
 	}
-	
-	
 	
 	public int getId() {
 		return this._id;
