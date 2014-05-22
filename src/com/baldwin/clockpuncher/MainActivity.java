@@ -36,19 +36,16 @@ public class MainActivity extends Activity implements OnClickListener {
         timeOut = (TextView) findViewById(R.id.tvTimeOut);
         clockedTime = (TextView) findViewById(R.id.tvClockedTime);
 
-
-
         punchIn.setOnClickListener(this);
         punchOut.setOnClickListener(this);
 
         populateField();
 
-
-
     }
 
     private void populateField(){
-
+        //initialize to 7 to view the last 7 fields.
+        int iAmountToDisplay = 7;
         String data;
         long lRow;
         long lTimeIn;
@@ -76,7 +73,10 @@ public class MainActivity extends Activity implements OnClickListener {
         info.close();
 
         String[] Entries = data.split("\n");
-        for (int i = Entries.length-7; i < Entries.length; i++) {
+        if(Entries.length < iAmountToDisplay){
+            iAmountToDisplay = Entries.length;
+        }
+        for (int i = Entries.length- iAmountToDisplay; i < Entries.length; i++) {
 
             String[] sRow = Entries[i].split(" ");
             if (sRow.length == 3) {
@@ -117,7 +117,6 @@ public class MainActivity extends Activity implements OnClickListener {
                     clockedTime.setText(clockedTime.getText() + "\n" );
 
                 }
-
 
             }
 
