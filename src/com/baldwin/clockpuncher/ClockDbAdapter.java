@@ -136,6 +136,10 @@ public class ClockDbAdapter {
 
         return result;
     }
+    public String[] getColumnId(){
+        String[] result = {DbHelper.KEY_ROW_ID, DbHelper.KEY_TIME_IN, DbHelper.KEY_TIME_OUT};
+        return result;
+    }
 
     private static class DbHelper extends SQLiteOpenHelper {
 

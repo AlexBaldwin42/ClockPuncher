@@ -10,19 +10,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
+import org.w3c.dom.Text;
 
 public class MainActivity extends Activity implements OnClickListener {
 
     Button punchIn, punchOut, viewDb;
-    TextView timeIn, timeOut, clockedTime;
+    TextView timeIn, timeOut, clockedTime, singleItem;
     int timePunched;
     long punchedTime;
     long punchedHours;
     Date dateHelperIn, dateHelperOut;
     Calendar calHelperIn, calHelperOut;
+    ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +35,13 @@ public class MainActivity extends Activity implements OnClickListener {
         timeIn = (TextView) findViewById(R.id.tvTimeIn);
         timeOut = (TextView) findViewById(R.id.tvTimeOut);
         clockedTime = (TextView) findViewById(R.id.tvClockedTime);
+
+        singleItem =(TextView) findViewById(R.layout.single_item);
+        ClockDbAdapter dbAdapter = new ClockDbAdapter(this);
+        String [] fromColumns = dbAdapter.getColumnId();
+        list.setArrayAdapter();
+
+        list.addView();
 
         punchIn.setOnClickListener(this);
         punchOut.setOnClickListener(this);
@@ -72,10 +79,14 @@ public class MainActivity extends Activity implements OnClickListener {
         data = info.getAllData();
         info.close();
 
+        //Split by new line into Entries array as Strings.
         String[] Entries = data.split("\n");
+
+        //If then length of the array is less then default to display.
         if(Entries.length < iAmountToDisplay){
             iAmountToDisplay = Entries.length;
         }
+        //Extract the data convert to a date format and set the Views.
         for (int i = Entries.length- iAmountToDisplay; i < Entries.length; i++) {
 
             String[] sRow = Entries[i].split(" ");
@@ -92,7 +103,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 sTimeIn = calHelptimeIn.getTime().toString().substring(4, 19);
                 sTimeOut = calHelptimeOut.getTime().toString().substring(4, 19);
 
-                Log.d("viewdb lTimeOut=", ""+ lTimeOut);
+                Log.d("MainActivity lTimeOut=", ""+ lTimeOut);
                 timeIn.setText(timeIn.getText() + "\n" + sTimeIn);
                 if(lTimeOut > 0) {
                     timeOut.setText(timeOut.getText() + "\n" + sTimeOut);
