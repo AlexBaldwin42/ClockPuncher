@@ -8,77 +8,42 @@
             android:background="#ccffff"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             >
-
-        <LinearLayout
+        <ListView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:orientation="vertical">
-
-            <TextView
-                    android:id="@+id/tvTimeIn"
-                    android:background="#00ffff"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="8"
-                    android:text="Time in"/>
+                android:layout_height="fill_parent"
+                android:id="@+id/lvMainList"
+                android:layout_weight="1"/>
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="10"
+                android:orientation="horizontal"
+                >
 
             <Button
                     android:id="@+id/bPunchIn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="In"/>
-        </LinearLayout>
+                    android:text="In" android:layout_alignParentTop="true" android:layout_alignParentLeft="true"/>
 
-        <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_weight="4"
-                android:layout_gravity="center"
-                android:orientation="vertical">
-
-
-            <TextView
-                    android:gravity="center_horizontal"
-                    android:id="@+id/tvTimeOut"
-                    android:background="#ccffff"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="8"
-                    android:text="Time out"/>
             <Button
                     android:id="@+id/bViewDb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="ViewDB"
-                    android:onClick="viewDb"/>
-        </LinearLayout>
-
-        <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-            <TextView
-                    android:gravity="right"
-                    android:background="#ffffff"
-                    android:id="@+id/tvClockedTime"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="8"
-                    android:text="Duration"/>
+                    android:text="View more"
+                    android:onClick="viewDb" android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"/>
             <Button
                     android:id="@+id/bPunchOut"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Out"/>
-        </LinearLayout>
+                    android:text="Out"
+                    android:layout_gravity="center_horizontal" android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"/>
+        </RelativeLayout>
 
     </LinearLayout>
 
