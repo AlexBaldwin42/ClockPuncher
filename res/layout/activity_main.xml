@@ -20,7 +20,8 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="10"
                 android:orientation="horizontal"
-                >
+
+                android:background="#6bc9d2">
 
             <Button
                     android:id="@+id/bPunchIn"

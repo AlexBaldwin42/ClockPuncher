@@ -2,33 +2,23 @@ package com.baldwin.clockpuncher;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.*;
-import org.w3c.dom.Text;
 
 public class MainActivity extends Activity implements OnClickListener {
 
     Button punchIn, punchOut, viewDb;
-    TextView timeIn, timeOut, clockedTime, singleItem;
-    ListView lvPunches;
-    int timePunched;
+    ListView lvEntries;
     int iAmountToDisplay = 7;
-    long punchedTime;
-    long punchedHours;
-    Date dateHelperIn, dateHelperOut;
     Calendar calHelperIn, calHelperOut;
-    ArrayList<String> alData;
-
+    ArrayList<String> alEntries;
     ArrayAdapter mAdapter;
-    ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,83 +28,70 @@ public class MainActivity extends Activity implements OnClickListener {
         punchIn = (Button) findViewById(R.id.bPunchIn);
         punchOut = (Button) findViewById(R.id.bPunchOut);
         viewDb = (Button) findViewById(R.id.bViewDb);
-        //timeIn = (TextView) findViewById(R.id.tvTimeIn);
-        //timeOut = (TextView) findViewById(R.id.tvTimeOut);
-        //clockedTime = (TextView) findViewById(R.id.tvClockedTime);
 
-        lvPunches = (ListView) findViewById(R.id.lvMainList);
+        lvEntries = (ListView) findViewById(R.id.lvMainList);
 
-        //Sets the lbData array list
-        populateField();
+        populateListView();
 
         punchIn.setOnClickListener(this);
         punchOut.setOnClickListener(this);
 
     }
 
-    private void populateField(){
-        //initialize to 7 to view the last 7 fields.
+    private void populateListView(){
 
         String data;
-        long lRow;
         long lTimeIn;
         long lTimeOut;
         String sTimeIn;
         String sTimeOut;
-        String sTotalTime;
-        long lClockedTime;
         long lTotalTime;
         long lTotalHours;
-        String row;
-        alData = new ArrayList<String>();
-
+        String row ="";
+        alEntries = new ArrayList<String>();
 
         Calendar calHelptimeIn = Calendar.getInstance();
         Calendar calHelptimeOut = Calendar.getInstance();
 
-        ClockDbAdapter info = new ClockDbAdapter(this);
-
-        //clear the view before displaying
-        //timeIn.setText("");
-        //timeOut.setText("");
-        //clockedTime.setText("");
+        ClockDbAdapter dbAdapter = new ClockDbAdapter(this);
 
         //Retrieve all the data in the database
-        info.open();
-        data = info.getAllData();
-        info.close();
+        dbAdapter.open();
+        data = dbAdapter.getAllData();
+        dbAdapter.close();
 
         //Split by new line into Entries array as Strings.
         String[] Entries = data.split("\n");
 
-        //If then length of the array is less then default to display.
+        //If length of the array is less then the amount to display.
         if(Entries.length < iAmountToDisplay){
             iAmountToDisplay = Entries.length;
         }
         //Extract the data convert to a date format and set the Views.
         for (int i = Entries.length- iAmountToDisplay; i < Entries.length; i++) {
 
-            row = "";
             String[] sRow = Entries[i].split(" ");
             if (sRow.length == 3) {
 
-                lRow = Long.parseLong(sRow[0]);
                 lTimeIn = Long.parseLong(sRow[1]);
                 lTimeOut = Long.parseLong(sRow[2]);
                 lTotalTime = lTimeOut - lTimeIn;
-
 
                 calHelptimeIn.setTimeInMillis(lTimeIn);
                 calHelptimeOut.setTimeInMillis(lTimeOut);
                 sTimeIn = calHelptimeIn.getTime().toString().substring(4, 19);
                 sTimeOut = calHelptimeOut.getTime().toString().substring(4, 19);
 
+                //If time out has the same month and day as sTimeIn then remove duplicate info
+                if(sTimeIn.substring(0,5).equals(sTimeOut.substring(0,5))){
+                    sTimeOut = sTimeOut.substring(6);
+                }else if(sTimeIn.substring(0,3).equals(sTimeOut.substring(0,3))){
+                    sTimeOut = sTimeOut.substring(4);
+                }
 
-                Log.d("MainActivity lTimeOut=", ""+ lTimeOut);
                 row = sTimeIn + " - ";
                 if(lTimeOut > 0) {
                     row = row + sTimeOut + " - ";
-
 
                     lTotalTime = lTotalTime / 1000 / 60;
                     if (lTotalTime > 60) {
@@ -125,8 +102,8 @@ public class MainActivity extends Activity implements OnClickListener {
                         row= row + String.valueOf(lTotalHours) + ":"
                                 + String.valueOf(lTotalTime);
                     } else {
-                        row = row + String.valueOf(lTotalTime) + " Minutes";
 
+                        row = row + String.valueOf(lTotalTime) + " Mins";
                     }
                 }else{
                     //There is no time out.
@@ -135,56 +112,19 @@ public class MainActivity extends Activity implements OnClickListener {
                 }
 
             }//end if
-            alData.add(row);
+            alEntries.add(row);
         }//end for
 
-        Log.d("MainActivity: populateFields", alData.get(0));
+        Log.d("MainActivity: populateFields", alEntries.get(0));
 
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alData);
-        lvPunches.setAdapter(mAdapter);
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
+        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alEntries);
+        lvEntries.setAdapter(mAdapter);
 
     }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("strTimeIn", timeIn.getText().toString());
-        outState.putString("strTimeOut", timeOut.getText().toString());
-        outState.putString("strClockedTime", clockedTime.getText().toString());
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        timeIn.setText(savedInstanceState.getString("strTimeIn"));
-        timeOut.setText(savedInstanceState.getString("strTimeOut"));
-        clockedTime.setText(savedInstanceState.getString("strClockedTime"));
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
-
     @Override
     public void onClick(View v) {
 
         ClockDbAdapter db = new ClockDbAdapter(MainActivity.this);
-        String timePunched;
-        String output;
 
         db.open();
         long lTimeOut = db.lastTimeOut();
@@ -197,19 +137,11 @@ public class MainActivity extends Activity implements OnClickListener {
 
                 if (lTimeOut > 0 || lTimeIn == -1) {
                     calHelperIn = Calendar.getInstance();
-                    //Shift shiftEntry = new Shift();
-                    //shiftEntry.setTimeIn(calHelperIn.getTimeInMillis());
 
                     db.open();
                     db.createEntryTimeIn(Long.toString(calHelperIn.getTimeInMillis()));
                     db.close();
 
-                    /*
-                    //set the output variable to display the month day and time.
-                    timePunched = calHelperIn.getTime().toString().substring(4, 19);
-                    output = timeIn.getText().toString() + "\n" + timePunched;
-                    timeIn.setText(output);
-                    */
                 } else {
                     Toast.makeText(this, "You have not punched out", 2).show();
 
@@ -233,43 +165,16 @@ public class MainActivity extends Activity implements OnClickListener {
                     lTimeOut = calHelperOut.getTimeInMillis();
                     String strTimeOut = Long.toString(lTimeOut);
 
-                    //Set the display taking off the first and last parts
-                    /*
-                    timePunched = calHelperOut.getTime().toString().substring(4, 19);
-                    output = timeOut.getText().toString() + "\n" + timePunched;
-                    timeOut.setText(output);
-                    */
-
                     //create database db
                     db.open();
                     db.createEntryTimeOut(strTimeOut);
                     db.close();
 
-                    //Calculate the amount of time that's past between punches.
-                    punchedTime = lTimeOut - lTimeIn;
-
-                    //Converts punched time from milliseconds to minutes.
-                    /*
-                    punchedTime = punchedTime / 1000 / 60;
-
-                    if (punchedTime > 60) {
-
-                        punchedHours = punchedTime / 60;
-                        punchedTime = punchedTime % 60;
-
-                        clockedTime.setText(clockedTime.getText() + "\n"
-                                + String.valueOf(punchedHours) + ":"
-                                + String.valueOf(punchedTime));
-                    } else {
-                        clockedTime.setText(clockedTime.getText() + "\n" + String.valueOf(punchedTime) + " Mins");
-
-                    }
-                    */
                 }
 
                 break;
         }
-        populateField();
+        populateListView();
 
     }
 
@@ -279,14 +184,48 @@ public class MainActivity extends Activity implements OnClickListener {
         Intent i = new Intent(this, ViewDb.class);
         startActivity(i);
         */
+
+        //Switch between showing 7 rows too all rows.
         if (iAmountToDisplay == 7) {
             iAmountToDisplay = 255;
             viewDb.setText("View Less");
         } else {
             iAmountToDisplay = 7;
             viewDb.setText("View More");
-        }
+        }lvEntries.setFadingEdgeLength(15);
 
-        populateField();
+        populateListView();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        populateListView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+
+
 }
