@@ -2,7 +2,7 @@ package com.baldwin.clockpuncher;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
+import java.util.Collections;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
@@ -17,8 +17,6 @@ public class MainActivity extends Activity implements OnClickListener {
     ListView lvEntries;
     int iAmountToDisplay = 7;
     Calendar calHelperIn, calHelperOut;
-    ArrayList<String> alEntries;
-    ArrayAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +26,6 @@ public class MainActivity extends Activity implements OnClickListener {
         punchIn = (Button) findViewById(R.id.bPunchIn);
         punchOut = (Button) findViewById(R.id.bPunchOut);
         viewDb = (Button) findViewById(R.id.bViewDb);
-
         lvEntries = (ListView) findViewById(R.id.lvMainList);
 
         populateListView();
@@ -39,6 +36,7 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     private void populateListView(){
+        //TODO Does not display correct amount with a new database
 
         String data;
         long lTimeIn;
@@ -47,8 +45,11 @@ public class MainActivity extends Activity implements OnClickListener {
         String sTimeOut;
         long lTotalTime;
         long lTotalHours;
-        String row ="";
-        alEntries = new ArrayList<String>();
+
+        ArrayList<String> alId = new ArrayList<String>();
+        ArrayList<String> alTimeIn = new ArrayList<String>();
+        ArrayList<String> alTimeOut = new ArrayList<String>();
+        ArrayList<String> alTotal = new ArrayList<String>();
 
         Calendar calHelptimeIn = Calendar.getInstance();
         Calendar calHelptimeOut = Calendar.getInstance();
@@ -67,12 +68,15 @@ public class MainActivity extends Activity implements OnClickListener {
         if(Entries.length < iAmountToDisplay){
             iAmountToDisplay = Entries.length;
         }
+
+
         //Extract the data convert to a date format and set the Views.
-        for (int i = Entries.length- iAmountToDisplay; i < Entries.length; i++) {
+        for (int i = Entries.length - iAmountToDisplay; i < Entries.length; i++) {
 
             String[] sRow = Entries[i].split(" ");
             if (sRow.length == 3) {
 
+                alId.add(sRow[0]);
                 lTimeIn = Long.parseLong(sRow[1]);
                 lTimeOut = Long.parseLong(sRow[2]);
                 lTotalTime = lTimeOut - lTimeIn;
@@ -85,13 +89,13 @@ public class MainActivity extends Activity implements OnClickListener {
                 //If time out has the same month and day as sTimeIn then remove duplicate info
                 if(sTimeIn.substring(0,5).equals(sTimeOut.substring(0,5))){
                     sTimeOut = sTimeOut.substring(6);
-                }else if(sTimeIn.substring(0,3).equals(sTimeOut.substring(0,3))){
+                }else if(sTimeIn.substring(0,3).equals(sTimeOut.substring(0,3))) {
                     sTimeOut = sTimeOut.substring(4);
                 }
+                alTimeIn.add(sTimeIn);
 
-                row = sTimeIn + " - ";
                 if(lTimeOut > 0) {
-                    row = row + sTimeOut + " - ";
+                    alTimeOut.add(sTimeOut);
 
                     lTotalTime = lTotalTime / 1000 / 60;
                     if (lTotalTime > 60) {
@@ -99,26 +103,57 @@ public class MainActivity extends Activity implements OnClickListener {
                         lTotalHours = lTotalTime / 60;
                         lTotalTime = lTotalTime % 60;
 
-                        row= row + String.valueOf(lTotalHours) + ":"
-                                + String.valueOf(lTotalTime);
+                        alTotal.add( String.valueOf(lTotalHours) + ":"
+                                + String.valueOf(lTotalTime));
+
                     } else {
 
-                        row = row + String.valueOf(lTotalTime) + " Mins";
+                        alTotal.add(String.valueOf(lTotalTime) + " Mins");
                     }
                 }else{
                     //There is no time out.
-                    row = row + "Still Clocked in";
+                    alTotal.add("");
+                    alTimeOut.add("Still Clocked in");
 
                 }
 
             }//end if
-            alEntries.add(row);
+            Log.d("populate alTimein.length=", ""+ alTimeIn.size());
+
         }//end for
 
-        Log.d("MainActivity: populateFields", alEntries.get(0));
+        Collections.reverse(alId);
+        Collections.reverse(alTimeIn);
+        Collections.reverse(alTimeOut);
+        Collections.reverse(alTotal);
+        //Convert all the array lists to arrays
+        String aId[];
+        String aTimeIn[];
+        String aTimeOut[];
+        String aTotal[];
 
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alEntries);
-        lvEntries.setAdapter(mAdapter);
+        if(alId.isEmpty()){
+            aId = new String[0];
+            aTimeIn = new String[0];
+            aTimeOut = new String[0];
+            aTotal = new String[0];
+        }else{
+            aId = new String[alId.size()];
+            alId.toArray(aId);
+
+            aTimeIn = new String[alTimeIn.size()];
+            alTimeIn.toArray(aTimeIn);
+
+            aTimeOut = new String[alTimeOut.size()];
+            alTimeOut.toArray(aTimeOut);
+
+            aTotal = new String[alTotal.size()];
+            alTotal.toArray(aTotal);
+        }
+
+        //Pass the arrays to ListViewAdapter
+        ListViewAdapter lvAdapter = new ListViewAdapter(this, aId, aTimeIn,aTimeOut,aTotal);
+        lvEntries.setAdapter(lvAdapter);
 
     }
     @Override
